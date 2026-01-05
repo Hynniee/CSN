@@ -976,19 +976,20 @@ function createProduct() {
 }
 //  HÀM TRỘN NGẪU NHIÊN MẢNG
 
-// Khởi tạo danh sách sản phẩm nổi bật (chỉ cần mảng id)
+// Khoi tao danh sach san pham noi bat
 function createFeatured() {
     if (localStorage.getItem('featured') == null) {
-        // Mặc định lấy vài sản phẩm đầu làm nổi bật (đảm bảo tồn tại trong products)
-        // Bạn có thể chỉnh lại danh sách id theo ý muốn.
-        localStorage.setItem('featured', JSON.stringify([1, 2, 3, 4, 5, 6]));
-    } else {
-        // Normalize: đảm bảo là mảng số
         try {
-            const f = JSON.parse(localStorage.getItem('featured')) || [];
-            localStorage.setItem('featured', JSON.stringify(f.map(Number)));
+            let products = JSON.parse(localStorage.getItem('products')) || [];
+            // Mac dinh lay 6 san pham dau tien dang hoat dong
+            let featured = products
+                .filter(p => Number(p.status) === 1)
+                .slice(0, 6)
+                .map(p => p.id);
+            localStorage.setItem('featured', JSON.stringify(featured));
         } catch (e) {
-            localStorage.setItem('featured', JSON.stringify([1, 2, 3, 4, 5, 6]));
+            // fallback an toan
+            localStorage.setItem('featured', JSON.stringify([1,2,3]));
         }
     }
 }
@@ -1001,9 +1002,9 @@ function shuffleArray(array) {
     return array;
 }
 
-// Tự khởi tạo dữ liệu khi load trang (không ghi đè window.onload của file khác)
-document.addEventListener('DOMContentLoaded', function () {
-    try { createProduct(); } catch (e) {}
-    try { createFeatured(); } catch (e) {}
-});
+(function(){
+    // Seed du lieu ngay khi script load (khong phu thuoc onload)
+    try { createProduct(); } catch(e) {}
+    try { createFeatured(); } catch(e) {}
+})();
 

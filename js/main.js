@@ -1276,7 +1276,7 @@ function renderFeaturedProducts() {
     let products = JSON.parse(localStorage.getItem("products")) || [];
 
     // lọc ra sản phẩm nổi bật vẫn đang hoạt động
-    let list = products.filter(p => featured.map(Number).includes(Number(p.id)) && Number(p.status) === 1);
+    let list = products.filter(p => featured.map(Number).includes(Number(p.id)) && p.status == 1);
 
     let html = "";
 
@@ -1312,12 +1312,12 @@ function renderFeaturedProducts() {
     document.getElementById("featured-products").innerHTML = html;
 }
 
-// gọi khi load trang (đợi seed localStorage trước)
-document.addEventListener('DOMContentLoaded', function () {
-    // Nếu có file initialization.js thì ưu tiên seed dữ liệu trước khi render
-    try { if (typeof createProduct === 'function') createProduct(); } catch (e) {}
-    try { if (typeof createFeatured === 'function') createFeatured(); } catch (e) {}
-    renderFeaturedProducts();
+// gọi khi load trang
+// (defer sau khi seed du lieu)
+document.addEventListener('DOMContentLoaded', function(){
+    try { if (typeof createProduct === 'function') createProduct(); } catch(e) {}
+    try { if (typeof createFeatured === 'function') createFeatured(); } catch(e) {}
+    try { renderFeaturedProducts(); } catch(e) { console.error(e); }
 });
 
 // Find Product
