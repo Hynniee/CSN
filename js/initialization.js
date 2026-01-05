@@ -975,6 +975,24 @@ function createProduct() {
     }
 }
 //  HÀM TRỘN NGẪU NHIÊN MẢNG
+
+// Khởi tạo danh sách sản phẩm nổi bật (chỉ cần mảng id)
+function createFeatured() {
+    if (localStorage.getItem('featured') == null) {
+        // Mặc định lấy vài sản phẩm đầu làm nổi bật (đảm bảo tồn tại trong products)
+        // Bạn có thể chỉnh lại danh sách id theo ý muốn.
+        localStorage.setItem('featured', JSON.stringify([1, 2, 3, 4, 5, 6]));
+    } else {
+        // Normalize: đảm bảo là mảng số
+        try {
+            const f = JSON.parse(localStorage.getItem('featured')) || [];
+            localStorage.setItem('featured', JSON.stringify(f.map(Number)));
+        } catch (e) {
+            localStorage.setItem('featured', JSON.stringify([1, 2, 3, 4, 5, 6]));
+        }
+    }
+}
+
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -983,6 +1001,9 @@ function shuffleArray(array) {
     return array;
 }
 
-window.onload = createProduct();
-
+// Tự khởi tạo dữ liệu khi load trang (không ghi đè window.onload của file khác)
+document.addEventListener('DOMContentLoaded', function () {
+    try { createProduct(); } catch (e) {}
+    try { createFeatured(); } catch (e) {}
+});
 

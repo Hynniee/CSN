@@ -1267,12 +1267,16 @@ function renderProducts(showProduct) {
     document.getElementById('home-products').innerHTML = productHtml;
 }
 
+
+
+
+
 function renderFeaturedProducts() {
     let featured = JSON.parse(localStorage.getItem("featured")) || [];
     let products = JSON.parse(localStorage.getItem("products")) || [];
 
     // lọc ra sản phẩm nổi bật vẫn đang hoạt động
-    let list = products.filter(p => featured.includes(p.id) && p.status == 1);
+    let list = products.filter(p => featured.map(Number).includes(Number(p.id)) && Number(p.status) === 1);
 
     let html = "";
 
@@ -1308,57 +1312,16 @@ function renderFeaturedProducts() {
     document.getElementById("featured-products").innerHTML = html;
 }
 
-// gọi khi load trang
-renderFeaturedProducts();
-
-
-function renderFeaturedProducts() {
-    let featured = JSON.parse(localStorage.getItem("featured")) || [];
-    let products = JSON.parse(localStorage.getItem("products")) || [];
-
-    // lọc ra sản phẩm nổi bật vẫn đang hoạt động
-    let list = products.filter(p => featured.includes(p.id) && p.status == 1);
-
-    let html = "";
-
-    if(list.length === 0){
-        html = `<p style="text-align:center;color:gray;">Chưa có sản phẩm nổi bật</p>`;
-    } else {
-        list.forEach(product => {
-            html += `
-            <div class="col-product">
-                <article class="card-product">
-                    <div class="card-header">
-                        <a href="#" onclick="detailProduct(${product.id})">
-                            <img class="card-image" src="${product.img}">
-                        </a>
-                    </div>
-                    <div class="book-info">
-                        <div class="card-title">
-                            <a href="#" onclick="detailProduct(${product.id})">${product.title}</a>
-                        </div>
-                        <div class="card-footer">
-                            <span class="current-price">${vnd(product.price)}</span>
-                            <button onclick="detailProduct(${product.id})" class="card-button order-item">
-                                <i class="fa-solid fa-cart-shopping-fast"></i> Mua ngay
-                            </button>
-                        </div>
-                    </div>
-                </article>
-            </div>
-            `;
-        });
-    }
-
-    document.getElementById("featured-products").innerHTML = html;
-}
-
-// gọi khi load trang
-renderFeaturedProducts();
-
+// gọi khi load trang (đợi seed localStorage trước)
+document.addEventListener('DOMContentLoaded', function () {
+    // Nếu có file initialization.js thì ưu tiên seed dữ liệu trước khi render
+    try { if (typeof createProduct === 'function') createProduct(); } catch (e) {}
+    try { if (typeof createFeatured === 'function') createFeatured(); } catch (e) {}
+    renderFeaturedProducts();
+});
 
 // Find Product
-var productAll = JSON.parse(localStorage.getItem('products')).filter(item => item.status == 1);
+var productAll = (JSON.parse(localStorage.getItem('products')) || []).filter(item => item.status == 1);
 function searchProducts(mode) {
     let valeSearchInput = document.querySelector('.form-search-input').value;
     let valueCategory = document.getElementById("advanced-search-category-select").value;
